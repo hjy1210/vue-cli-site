@@ -34,6 +34,15 @@ function lonofmoon(jde) {
 	let radian = moonposition.position(jde).lon;
 	return (radian * 180 / Math.PI + 360) % 360;
 }
+function jie(date){
+    return Math.floor(lonofsolar(julian.DateToJDE(date))/15)
+}
+function _shuoWang(date){
+    let lon1 = lonofsolar(julian.DateToJDE(date))
+    let lon2 = lonofmoon(julian.DateToJDE(date))
+    let lon = (lon2-lon1+720) % 360
+    return Math.floor(lon/180)
+}
 function inJie(date1, date2){
     let lon1 = lonofsolar(julian.DateToJDE(date1))
     let lon2 = lonofsolar(julian.DateToJDE(date2))
@@ -68,44 +77,29 @@ function getTomorrow(date) {
 const ShuoWangNames = ["初一","望"]
 const JieqiNames=["春分","清明","穀雨","立夏","小滿","芒種","夏至","小暑","大暑","立秋",
     "處暑","白露","秋分","寒露","霜降","立冬","小雪","大雪","冬至","小寒","大寒","立春","雨水","驚蟄"]
+function middleDate(date1, date2) {
+    return new Date((date1.getTime()+date2.getTime())/2)
+}
+
 function jieqi(year) {
     let res=[]
     let lastday = new Date(year + 1, 0, 1);
 	for (let today = new Date(year, 0, 1); today < lastday; today = getTomorrow(today)) {
         let tomorrow=getTomorrow(today)
-        if (inJie(today,tomorrow)>=0){
-            //console.log(""+today)
-            for (let hour=0;hour<24;hour++){
-                let hour1=new Date(today)
-                hour1.setHours(hour,0,0)
-                let hour2=new Date(today)
-                hour2.setHours(hour+1,0,0)
-                if (inJie(hour1,hour2)>=0){
-                    //console.log(""+hour1)
-                    for (let minute=0;minute<60;minute++){
-                        let minute1=new Date(hour1)
-                        minute1.setHours(hour,minute,0)
-                        let minute2=new Date(hour1)
-                        minute2.setHours(hour,minute+1,0)
-                        if (inJie(minute1,minute2)>=0){
-                            //console.log(""+minute1)
-                            for (let second=0; second<60; second++){
-                                let second1=new Date(minute1)
-                                second1.setHours(hour,minute,second)
-                                let second2=new Date(minute1)
-                                second2.setHours(hour,minute,second+1)
-                                if (inJie(second1,second2)>=0){
-                                    //console.log(JieqiNames[inJie(second1,second2)]+second1)
-                                    res.push({name:JieqiNames[inJie(second1,second2)],date:second1})
-                                    break
-                                }
-                            }
-                            break
-                        }
-                    }
-                    break
-                }
+        let value = inJie(today,tomorrow)
+        if (value>=0){
+            let left = new Date(today)
+            let right = new Date(tomorrow)
+            while (right-left>500) {
+                let jie1 = jie(left)
+                let middle = middleDate(left, right)
+                let jie0 = jie(middle)
+                if (jie0==jie1)
+                  left = middle
+                else 
+                  right = middle
             }
+            res.push({name:JieqiNames[value],date:middleDate(left, right)})
         }
     }
     return res
@@ -115,62 +109,44 @@ function shuoWang(year) {
     let lastday = new Date(year + 1, 0, 1);
 	for (let today = new Date(year, 0, 1); today < lastday; today = getTomorrow(today)) {
         let tomorrow=getTomorrow(today)
-        if (inShuoWang(today,tomorrow)>=0){
-            //console.log(""+today)
-            for (let hour=0;hour<24;hour++){
-                let hour1=new Date(today)
-                hour1.setHours(hour,0,0)
-                let hour2=new Date(today)
-                hour2.setHours(hour+1,0,0)
-                if (inShuoWang(hour1,hour2)>=0){
-                    //console.log(""+hour1)
-                    for (let minute=0;minute<60;minute++){
-                        let minute1=new Date(hour1)
-                        minute1.setHours(hour,minute,0)
-                        let minute2=new Date(hour1)
-                        minute2.setHours(hour,minute+1,0)
-                        if (inShuoWang(minute1,minute2)>=0){
-                            //console.log(""+minute1)
-                            for (let second=0; second<60; second++){
-                                let second1=new Date(minute1)
-                                second1.setHours(hour,minute,second)
-                                let second2=new Date(minute1)
-                                second2.setHours(hour,minute,second+1)
-                                if (inShuoWang(second1,second2)>=0){
-                                    //console.log(ShuoWangNames[inShuoWang(second1,second2)]+second1)
-                                    res.push({name:ShuoWangNames[inShuoWang(second1,second2)],date:second1})
-                                    break
-                                }
-                            }
-                            break
-                        }
-                    }
-                    break
-                }
+        let value = inShuoWang(today,tomorrow)
+        if (value>=0){
+            let left = new Date(today)
+            let right = new Date(tomorrow)
+            let sw1 = _shuoWang(left)
+            while (right-left>500) {
+                let middle = middleDate(left, right)
+                let sw0 = _shuoWang(middle)
+                if (sw0==sw1)
+                  left = middle
+                else 
+                  right = middle
             }
+            res.push({name:ShuoWangNames[value],date:middleDate(left, right)})
         }
     }
     return res
 }
-module.exports = {jieqi, shuoWang}
-/*let today=new Date(2020,0,1)
-for (let i=0;i<40;i++){
-    console.log(""+today)
-    today=getTomorrow(today)
-}*/
+function createLunarCalendar(year){
+    let terms1 = jieqi(year-1)
+    let terms2 = jieqi(year)
+    let terms3 = jieqi(year+1)
+    let first1 = shuoWang(year-1)
+    let first2 = shuoWang(year)
+    let first3 = shuoWang(year+1)
+    let terms = first1.concat(first2).concat(first3).concat(terms1).concat(terms2).concat(terms3)
+        .filter(x=>x.name!="望")
+        .sort((x,y)=>x.date-y.date)
+    return terms
+}
+module.exports = {jieqi, shuoWang, createLunarCalendar}
 
-//jieqi(2020);
+//let start = Date.now()
+//console.log(createLunarCalendar(2020).map(function (x) {return {name:x.name,date:x.date.toString()}}))
+//let end = Date.now()
+//console.log(""+(end-start)/1000+" seconds")
 //jieqi(2019)
 //shuoWang(2020)
-/*
-for (let i=-5;i<6;i++){
-    let tjde=jde(2020,12,15,0,17+i)
-    console.log(17+i,lonofmoon(tjde),lonofsolar(tjde),lonofmoon(tjde)-lonofsolar(tjde))
-}
-for (let i=-5;i<6;i++){
-    let tjde=jde(2020,12,30,11,28+i)
-    console.log(28+i,lonofmoon(tjde),lonofsolar(tjde),lonofmoon(tjde)-lonofsolar(tjde))
-}
 
 // https://ssd.jpl.nasa.gov/horizons.cgi 可查許多資料，抱括太陽到地心的赤經資料
 //Ephemeris Type [change] : 	OBSERVER
@@ -180,16 +156,6 @@ for (let i=-5;i<6;i++){
 //Table Settings [change] : 	QUANTITIES=1,2,31
 //Display/Output [change] : 	default (formatted HTML)
 
-console.log("算春分")
-for (let i=-5;i<6;i++){
-    let jds = jde(2020,3,20,11,49+i)
-    console.log(49+i,lonofsolar(jds))
-}
-console.log("算秋分")
-for (let i=-5;i<6;i++){
-    console.log(31+i,lonofsolar(jde(2020,9,22,21,31+i)))
-}
-*/
 /*
 console.log(earth)
 // 計算2020年的節氣，與中央氣象局的資料完全相符
@@ -212,3 +178,4 @@ console.log(date, tjd, tjd/36525, base.J2000Century(tjd))
 console.log((tjd-2451545)/36525)
 console.log(-1/36525/2)
 */
+//console.log(""+middleDate(new Date(2020,11,22), new Date(2020,11,23)))
