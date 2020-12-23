@@ -136,8 +136,22 @@ function createLunarCalendar(year){
     let first3 = shuoWang(year+1)
     let terms = first1.concat(first2).concat(first3).concat(terms1).concat(terms2).concat(terms3)
         .filter(x=>x.name!="望")
+        .map(function(x){x.date.setHours(0,0,0,0);return x})
         .sort((x,y)=>x.date-y.date)
-    return terms
+    let res=[]
+    let curDate=terms[0].date
+    let curNames=[terms[0].name]
+    for (let i=1; i < terms.length; i++) {
+        if (terms[i].date-curDate==0){
+            curNames.push(terms[i].name)
+        } else {
+            res.push({date:curDate, names:[...curNames]})
+            curDate = terms[i].date
+            curNames = [terms[i].name]
+        }
+    }
+    res.push({date:curDate, names:[...curNames]})
+    return res
 }
 module.exports = {jieqi, shuoWang, createLunarCalendar}
 
@@ -148,34 +162,17 @@ module.exports = {jieqi, shuoWang, createLunarCalendar}
 //jieqi(2019)
 //shuoWang(2020)
 
-// https://ssd.jpl.nasa.gov/horizons.cgi 可查許多資料，抱括太陽到地心的赤經資料
-//Ephemeris Type [change] : 	OBSERVER
-//Target Body [change] : 	Sun [Sol] [10]
-//Observer Location [change] : 	Geocentric [500]
-//Time Span [change] : 	Start=2020-9-22 13:30, Stop=2020-9-22 13:31, Intervals=60
-//Table Settings [change] : 	QUANTITIES=1,2,31
-//Display/Output [change] : 	default (formatted HTML)
+//let date = new Date(2020,11,23,12,1,2,3)
+//console.log(date, date.getTime())
+//date.setHours(0,0,0,0)
+//console.log(date, date.getTime())
 
-/*
-console.log(earth)
-// 計算2020年的節氣，與中央氣象局的資料完全相符
-for (let i=0; i<12; i++){
-    console.log(julian.JDEToDate(solstice.longitude(2020, earth, i* Math.PI/6)))
-}
+let date1=new Date(2020,11,23,12,1,2,3)
+let date2=new Date(2020,11,23,12,1,2,3)
+console.log(date1==date2)
+console.log(date1-date2)
 
-// meeus 2009 p.79 2002 deltaT = 64.3
-let date = new Date(2002,0,1)
-let diff = julian.DateToJDE(date) - julian.DateToJD(date)
-console.log(julian.DateToJDE(date), julian.DateToJD(date), diff*86400)
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
-// Date constructor with string is not encouraged due to browser differences and inconsistencies.
-date = new Date('2000-01-01T00:00:00Z')
-let date1 = new Date(Date.UTC(2000,0,1))
-console.log(`new Date('2000-01-01T00:00:00Z')=${new Date('2000-01-01T00:00:00Z').toUTCString()}\nnew Date(Date.UTC(2000,0,1))=${new Date(Date.UTC(2000,0,1)).toUTCString()}`)
-let tjd = julian.DateToJD(date)
-console.log(julian.CalendarGregorianToJD(2000,1,1), tjd)
-console.log(date, tjd, tjd/36525, base.J2000Century(tjd))
-console.log((tjd-2451545)/36525)
-console.log(-1/36525/2)
-*/
-//console.log(""+middleDate(new Date(2020,11,22), new Date(2020,11,23)))
+let numbers = [1, 2, 3];
+let numbersCopy = [...numbers];
+console.log(numbersCopy)
+console.log(numbers==numbersCopy)

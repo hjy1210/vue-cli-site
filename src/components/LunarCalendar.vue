@@ -9,7 +9,7 @@
         <th>時刻</th>
       </thead>
      <tr v-for="(term, index) in terms" v-bind:key="index">
-        <td>{{term.name}}</td>
+        <td>{{term.names.join(",")}}</td>
         <td>{{term.date}}</td>
       </tr>
     </table>
@@ -17,7 +17,8 @@
 </template>
 
 <script>
-  import { jieqi, shuoWang } from "./LunarCalendar.js";
+  //import { jieqi, shuoWang, createLunarCalendar } from "./LunarCalendar.js";
+  import { createLunarCalendar } from "./LunarCalendar.js";
   export default {
     name: 'calender',
     data() {
@@ -33,9 +34,10 @@
     },
     methods: {
       getSeason: function(){
-        let terms = jieqi(this.year)
-        let ones = shuoWang(this.year).filter(one=>one.name=="初一")
-        this.terms = terms.concat(ones).sort((x,y)=>x.date-y.date)
+        //let terms = jieqi(this.year)
+        //let ones = shuoWang(this.year).filter(one=>one.name=="初一")
+        //this.terms = terms.concat(ones).sort((x,y)=>x.date-y.date)
+        this.terms = createLunarCalendar(this.year)
       }
     }
   }
