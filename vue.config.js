@@ -1,4 +1,6 @@
 // vue.config.js
 module.exports = {
-    publicPath :'/lunarcalendar/'
+    publicPath :process.env.NODE_ENV === 'production'
+    ? '/lunarcalendar/'
+    : '/'
   }
