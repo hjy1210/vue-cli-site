@@ -1,4 +1,4 @@
-let {jieqi, shuoWang, ZhongqiNames} = require("./base.js");
+let {jieqi, shuoWang, ZhongqiNames, getTomorrow} = require("./base.js");
 /**
  * 計算 year 年度的日曆
  * @param {Number} year (int)
@@ -45,7 +45,21 @@ function constructCalendar(mixedTerms, year) {
 			result.push(mixedTerms[i]);
 		}
 	}
-	return result.filter((x) => x.date.getFullYear() == year);
+	// 插入平常日
+	let full = []
+	let curDay
+	for (let i=0;i< result.length-1; i++){
+		full.push(result[i])
+		curDay= getTomorrow(result[i].date)
+		let add = 1
+		while (curDay < result[i+1].date){
+			full.push({names:[], month:result[i].month, leap:result[i].leap, day:result[i].day+add, date:curDay})
+			add++
+			curDay = getTomorrow(curDay)
+		}
+	}
+	//return result.filter((x) => x.date.getFullYear() == year);
+	return full.filter((x) => x.date.getFullYear() == year);
 }
 /**
  * 合併去年、今年、明年的節氣與朔望資料(移除望的資料)，時刻調為當日零時，
@@ -174,7 +188,17 @@ function adjustMixedTerms(mixedTerms) {
 		}
 	}
 }
-module.exports = { createLunarCalendar };
+function getTwoRows(term){
+	let firstPart = term.date.getDate().toString();
+	let secondPart
+	if (term.names.length==0 || (term.names.length==1 && term.names[0]=="初一" )){
+		secondPart= `${term.month}/${term.day}`
+		if (term.leap)
+			secondPart = "潤" + secondPart
+	} else secondPart = term.names[term.names.length-1]
+	return [firstPart, secondPart]
+}
+module.exports = { createLunarCalendar, getTwoRows };
 
 /*console.log(ZhongqiNames)
 let start = Date.now()

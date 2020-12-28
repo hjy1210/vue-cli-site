@@ -176,4 +176,4 @@ function shuoWang(year) {
 	}
 	return res;
 }
-module.exports = { jieqi, shuoWang, ZhongqiNames};
+module.exports = { jieqi, shuoWang, ZhongqiNames, getTomorrow};
