@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h2>Calendar</h2>
-    西元年度：<input v-model.number="year" type="number" >
-    <button v-on:click="getSeason">計算</button><span>{{message}}</span>
+    <h3>陰陽合曆</h3>
+    西元年度：<input v-model.number="year" type="number"  style="width:60px;">
+    <button v-on:click="getSeason" style="font-size:20pt">計算</button><span>{{message}}</span>
     <section>
       <div v-for= "(month,index) in monthTables" v-bind:key="index">
       <table style="margin:20px">
@@ -81,7 +81,7 @@
         mixedTerms:[],
         calendar:[],
         eclipses:[],
-        message:"按計算鍵開始計算日曆，約需10秒(桌上型瀏覽器)",
+        message:"按計算鍵開始計算日曆，桌上型瀏覽器約需10秒，手機約需30秒",
         monthTables:[]
       }
     },
