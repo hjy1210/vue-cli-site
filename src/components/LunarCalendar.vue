@@ -6,7 +6,7 @@
     <section>
       <div v-for= "(month,index) in monthTables" v-bind:key="index">
       <table style="margin:20px">
-        <tr><td colspan="7" style="text-align:center;">{{index+1}}&nbsp;&nbsp;&nbsp;月</td></tr>
+        <tr><td colspan="7" style="text-align:center;">{{year}}年{{index+1}}&nbsp;&nbsp;&nbsp;月</td></tr>
         <tr  style="background-color:#dddddd">
           <td style="text-align:center;">日</td>
           <td style="text-align:center;">一</td>
@@ -95,6 +95,7 @@
         //let ones = shuoWang(this.year).filter(one=>one.name=="初一")
         //this.terms = terms.concat(ones).sort((x,y)=>x.date-y.date)
         this.message=`計算中`
+        console.log(this.message)
         let calendarData= createLunarCalendar(this.year)
         this.terms =  calendarData.terms //jieqi(this.year) 
         this.shuoWangs = calendarData.shuoWangs //shuoWang(this.year)
@@ -109,9 +110,11 @@
           let result=[]
           if (this.shuoWangs[i].name=="初一"){
             this.message=`計算 ${this.shuoWangs[i].date} 是否發生日蝕`
+            console.log(this.message)
             result = await Eclipse(begin,end,eclipseMap.solar)
           } else {
             this.message=`計算 ${this.shuoWangs[i].date} 是否發生月蝕`
+            console.log(this.message)
             result = await Eclipse(begin,end,eclipseMap.moon)
           }
           if (result.length==1 && result[0].status=="正常")
@@ -121,7 +124,7 @@
           //console.log(eclipses)
         }
         this.eclipses = eclipses
-        this.message = "按計算鍵開始計算日曆，約需10秒(桌上型瀏覽器)"
+        this.message = "按計算鍵開始計算日曆，桌上型瀏覽器約需10秒，手機約需30秒"
         this.monthTables = this.constructMonthTable()
         console.log(this.monthTables)
       },
