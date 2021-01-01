@@ -1,8 +1,8 @@
 <template>
   <div>
     <h3>陰陽合曆</h3>
-    西元年度：<input v-model.number="year" type="number"  style="width:60px;">
-    <button v-on:click="getSeasonWrap" style="font-size:20pt">計算</button><span>{{message}}</span>
+    西元年度：<input v-model.number="year" @input="clear" type="number"  :disabled="busy"  style="width:60px;">
+    <button v-on:click="getSeasonWrap" style="font-size:20pt" :disabled="busy">計算</button><span>{{message}}</span>
     <section>
       <div v-for= "(month,index) in monthTables" v-bind:key="index">
       <table style="margin:20px">
@@ -75,6 +75,7 @@
     name: 'calender',
     data() {
       return {
+        busy:null,
         year:2020,
         terms:[],
         shuoWangs:[],
@@ -90,8 +91,17 @@
       //this.getSeason()
     },
     methods: {
+      clear: function(){
+       this.terms=[]
+        this.shuoWangs=[]
+        this.mixedTerms=[]
+        this.calendar=[]
+        this.eclipses=[]
+        this.monthTables=[]
+      },
       getSeasonWrap: function(){
         this.message=`計算中........`
+        this.busy = true
         setTimeout(this.getSeason,0)
       },
       getSeason: async function(){
@@ -131,6 +141,7 @@
         this.message = "按計算鍵開始計算日曆，桌上型瀏覽器約需10秒，手機約需30秒"
         this.monthTables = this.constructMonthTable()
         console.log(this.monthTables)
+        this.busy = null
       },
       getTwoRows: function (term){
         if (term)
