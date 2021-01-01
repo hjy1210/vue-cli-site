@@ -34,6 +34,7 @@
         <td><div>{{getTwoRows(term)[0]}}</div><div>{{getTwoRows(term)[1]}}</div></td><td>{{term.date.getMonth()+1}}/{{term.date.getDate()}}</td>
       </tr>
     </table>-->
+    <section>
     <table style="margin:20px" v-if="terms.length > 0">
       <thead>
         <th>節氣</th>
@@ -41,7 +42,7 @@
       </thead>
      <tr v-for="(term, index) in terms" v-bind:key="index">
         <td>{{term.name}}</td>
-        <td>{{term.date}}</td>
+        <td>{{term.date.getFullYear()}}/{{term.date.getMonth()+1}}/{{term.date.getDate()}} {{term.date.getHours()}}:{{term.date.getMinutes()}}:{{term.date.getSeconds()}}</td>
       </tr>
     </table>
     <table style="margin:20px" v-if="shuoWangs.length > 0">
@@ -51,19 +52,20 @@
       </thead>
      <tr v-for="(term, index) in shuoWangs" v-bind:key="index">
         <td>{{term.name}}</td>
-        <td>{{term.date}}</td>
+        <td>{{term.date.getFullYear()}}/{{term.date.getMonth()+1}}/{{term.date.getDate()}} {{term.date.getHours()}}:{{term.date.getMinutes()}}:{{term.date.getSeconds()}}</td>
       </tr>
     </table>
     <table style="margin:20px" v-if="eclipses.length > 0">
       <thead>
-        <th>蝕況</th>
+        <th>日月蝕況</th>
         <th>起始時刻</th>
       </thead>
      <tr v-for="(term, index) in eclipses" v-bind:key="index">
         <td>{{term.status}}</td>
-        <td>{{term.date}}</td>
+        <td>{{term.date.getFullYear()}}/{{term.date.getMonth()+1}}/{{term.date.getDate()}} {{term.date.getHours()}}:{{term.date.getMinutes()}}:{{term.date.getSeconds()}}</td>
       </tr>
     </table>
+    </section>
   </div>
 </template>
 
@@ -136,14 +138,16 @@
           let result=[]
           if (this.shuoWangs[i].name=="初一"){
             let message =`計算 ${this.shuoWangs[i].date.getMonth()}/${this.shuoWangs[i].date.getDate()} 是否發生日蝕`
-            this.message = await this.myWorker.postMessage('message1',[message])
+            //this.message = await this.myWorker.postMessage('message1',[message])
             //console.log(this.message)
             result = Eclipse(begin,end,eclipseMap.solar)
+            this.message = await this.myWorker.postMessage('message1',[message])
           } else {
             let message=`計算 ${this.shuoWangs[i].date.getMonth()}/${this.shuoWangs[i].date.getDate()} 是否發生月蝕`
-            this.message = await this.myWorker.postMessage('message1',[message])
+            //this.message = await this.myWorker.postMessage('message1',[message])
             //console.log(this.message)
             result = Eclipse(begin,end,eclipseMap.moon)
+            this.message = await this.myWorker.postMessage('message1',[message])
           }
           if (result.length==1 && result[0].status=="正常")
             result = []
