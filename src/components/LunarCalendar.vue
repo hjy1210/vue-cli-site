@@ -104,7 +104,7 @@
         this.busy = true
         setTimeout(this.getSeason,0)
       },
-      getSeason: async function(){
+      getSeason: function(){
         //let terms = jieqi(this.year)
         //let ones = shuoWang(this.year).filter(one=>one.name=="初一")
         //this.terms = terms.concat(ones).sort((x,y)=>x.date-y.date)
@@ -120,30 +120,30 @@
           let jde = julian.DateToJDE(this.shuoWangs[i].date)
           let begin = julian.JDEToDate(jde - 0.5)
           let end = julian.JDEToDate(jde + 0.5)
-          console.log(begin, this.shuoWangs[i].date, julian.JDEToDate(jde), end)
-          console.log(jde-0.5,jde,jde+0.5)
+          //console.log(begin, this.shuoWangs[i].date, julian.JDEToDate(jde), end)
+          //console.log(jde-0.5,jde,jde+0.5)
           //console.log(begin,end)
           let result=[]
           if (this.shuoWangs[i].name=="初一"){
             this.message=`計算 ${this.shuoWangs[i].date} 是否發生日蝕`
-            console.log(this.message)
-            result = await Eclipse(begin,end,eclipseMap.solar)
+            //console.log(this.message)
+            result = Eclipse(begin,end,eclipseMap.solar)
           } else {
             this.message=`計算 ${this.shuoWangs[i].date} 是否發生月蝕`
-            console.log(this.message)
-            result = await Eclipse(begin,end,eclipseMap.moon)
+            //console.log(this.message)
+            result = Eclipse(begin,end,eclipseMap.moon)
           }
           if (result.length==1 && result[0].status=="正常")
             result = []
           if (result.length >0)
             eclipses = eclipses.concat(result)
-          console.log("eclipses", eclipses)
+          //console.log("eclipses", eclipses)
         }
         this.eclipses = eclipses
-        console.log("this.eclipses", this.eclipses)
+        //console.log("this.eclipses", this.eclipses)
         this.message = "按計算鍵開始計算日曆，桌上型瀏覽器約需10秒，手機約需30秒"
         this.monthTables = this.constructMonthTable()
-        console.log(this.monthTables)
+        //console.log(this.monthTables)
         this.busy = null
       },
       getTwoRows: function (term){

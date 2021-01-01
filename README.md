@@ -32,6 +32,12 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 Execute `vue create vue-cli-site` in parent directory to create this project.
 
+### Debug: Use Vue.js devtools in chrome
+
+1. 用 Chrome 瀏覽到網頁
+2. 在 devtools|F12 > sources|pages|top|webpack > click selected vue component > component source appeared > can set break point now
+
+
 ## LunarCalendar.vue
 
 在 VSCode 按 ctrl+shift+p，取 generator-vue-component:new component 得 LunarCalendar.vue 的骨架，

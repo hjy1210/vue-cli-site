@@ -201,15 +201,14 @@ function solarEclipseStatus(jde) {
 let eclipseMap = { solar: solarEclipseStatus, moon: moonEclipseStatus };
 // https://eclipse.gsfc.nasa.gov/
 function Eclipse(beginDate, endDate, eclipseStatus) {
-	return new Promise((resolve) => {
 		let result = [];
 		let begin = new Date(beginDate);
 		begin.setSeconds(0);
 		let end = new Date(endDate);
 		end.setSeconds(0);
-		console.log(begin, end)
+		//console.log(begin, end)
 		let minutes = Math.floor((end - begin) / (1000 * 60));
-		console.log(`minutes=${minutes}`)
+		//console.log(`minutes=${minutes}`)
 		let jde = julian.DateToJDE(begin);
 		let data = [];
 		for (let i = 0; i <= minutes; i++) {
@@ -240,8 +239,8 @@ function Eclipse(beginDate, endDate, eclipseStatus) {
 					result.push({ date: data[i].date, status: data[i].status });
 			}
 		}
-		resolve(result);
-	});
+		return result
+	
 }
 
 module.exports = { Eclipse, eclipseMap, julian };
