@@ -32,11 +32,53 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 Execute `vue create vue-cli-site` in parent directory to create this project.
 
+## Debug
+
+參考[Debugging-in-vscode and Vue Devtools](https://vuejs.org/v2/cookbook/debugging-in-vscode.html)，似乎用 devtools 較為方便。
+
+### Debug: Use VSCode
+
+1. Displaying Source Code in the Browser
+
+    add devtool property inside vue.config.js in project root directory
+
+    ```{json}
+    module.exports = {
+        configureWebpack: {
+            devtool: 'source-map'
+        }
+    }
+    ```
+
+2. Launching the Application from VS Code
+
+    add following debug configuration in lauch.json
+
+    ```{json}
+    {
+        "name": "VueJS Chrome",
+        "request": "launch",
+        "type": "chrome",
+        "url": "http://localhost:8080",
+        "webRoot": "${workspaceFolder}/src",
+        "breakOnLoad": true,
+        "sourceMapPathOverrides": {
+            "webpack:///src/*": "${webRoot}/*"
+        }
+    },
+
+    ```
+
+3. Set breakpoint at source code in VSCode
+4. npm run serve
+5. ctrl+shift+D > execute VueJS Chrome
+6. 在 VSCode 進行除錯
+
 ### Debug: Use Vue.js devtools in chrome
 
 1. 用 Chrome 瀏覽到網頁
 2. 在 devtools|F12 > sources|pages|top|webpack > click selected vue component > component source appeared > can set break point now
-
+3. 在 Chrome 上進行除錯
 
 ## LunarCalendar.vue
 
