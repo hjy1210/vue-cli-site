@@ -2,7 +2,7 @@
   <div>
     <h3>陰陽合曆</h3>
     西元年度：<input v-model.number="year" type="number"  style="width:60px;">
-    <button v-on:click="getSeason" style="font-size:20pt">計算</button><span>{{message}}</span>
+    <button v-on:click="getSeasonWrap" style="font-size:20pt">計算</button><span>{{message}}</span>
     <section>
       <div v-for= "(month,index) in monthTables" v-bind:key="index">
       <table style="margin:20px">
@@ -90,12 +90,16 @@
       //this.getSeason()
     },
     methods: {
+      getSeasonWrap: function(){
+        this.message=`計算中........`
+        setTimeout(this.getSeason,0)
+      },
       getSeason: async function(){
         //let terms = jieqi(this.year)
         //let ones = shuoWang(this.year).filter(one=>one.name=="初一")
         //this.terms = terms.concat(ones).sort((x,y)=>x.date-y.date)
-        this.message=`計算中`
-        console.log(this.message)
+        //this.message=`計算中`
+        //console.log(this.message)
         let calendarData= createLunarCalendar(this.year)
         this.terms =  calendarData.terms //jieqi(this.year) 
         this.shuoWangs = calendarData.shuoWangs //shuoWang(this.year)
