@@ -83,6 +83,7 @@ function inShuoWang(date1, date2) {
 }
 function getTomorrow(date) {
 	let d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+	d.setFullYear(date.getFullYear())
 	d.setDate(d.getDate() + 1);
 	return d;
 }
@@ -131,7 +132,10 @@ function middleDate(date1, date2) {
 function jieqi(year) {
 	let res = [];
 	let lastday = new Date(year + 1, 0, 1);
-	for (let today = new Date(year, 0, 1); today < lastday; today = getTomorrow(today)) {
+	let today = new Date(year, 0, 1)
+	lastday.setFullYear(year + 1)
+	today.setFullYear(year)
+	for (; today < lastday; today = getTomorrow(today)) {
 		let tomorrow = getTomorrow(today);
 		let value = inJie(today, tomorrow);
 		if (value >= 0) {
@@ -158,7 +162,11 @@ function jieqi(year) {
 function shuoWang(year) {
 	let res = [];
 	let lastday = new Date(year + 1, 0, 1);
-	for (let today = new Date(year, 0, 1); today < lastday; today = getTomorrow(today)) {
+	let today = new Date(year, 0, 1)
+	lastday.setFullYear(year + 1)
+	today.setFullYear(year)
+
+	for (; today < lastday; today = getTomorrow(today)) {
 		let tomorrow = getTomorrow(today);
 		let value = inShuoWang(today, tomorrow);
 		if (value >= 0) {
@@ -177,3 +185,11 @@ function shuoWang(year) {
 	return res;
 }
 module.exports = { jieqi, shuoWang, ZhongqiNames, getTomorrow};
+/*
+let jdes = [1721789.5684809217, 1721790.0684809217, 1721790.5684809217]
+jdes = [1721789.5684809217, 1721790.0684809217, 1721790.5684809217]
+let dates = jdes.map(x=>julian.JDEToDate(x))
+console.log(dates,""+dates)
+dates = jdes.map(x=>julian.JDEToDate(x+0.3))
+console.log(dates,""+dates)
+*/

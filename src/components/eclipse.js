@@ -207,9 +207,9 @@ function Eclipse(beginDate, endDate, eclipseStatus) {
 		begin.setSeconds(0);
 		let end = new Date(endDate);
 		end.setSeconds(0);
-		// console.log(begin, end)
+		console.log(begin, end)
 		let minutes = Math.floor((end - begin) / (1000 * 60));
-		// console.log(minutes)
+		console.log(`minutes=${minutes}`)
 		let jde = julian.DateToJDE(begin);
 		let data = [];
 		for (let i = 0; i <= minutes; i++) {
