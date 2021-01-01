@@ -83,13 +83,21 @@
         calendar:[],
         eclipses:[],
         message:"按計算鍵開始計算日曆，桌上型瀏覽器約需10秒，手機約需30秒",
-        monthTables:[]
+        monthTables:[],
+        myWorker:null
       }
     },
     computed: {},
     mounted() {
       //this.getSeason()
     },
+    created(){
+      this.myWorker = this.$worker.create([
+        {message: 'message1', func: (arg)=>`${arg}`},
+        {message: 'message2', func: (arg) => 'Output 2 '+arg}
+      ])
+    },
+
     methods: {
       clear: function(){
        this.terms=[]
@@ -104,13 +112,15 @@
         this.busy = true
         setTimeout(this.getSeason,0)
       },
-      getSeason: function(){
+      getSeason: async function(){
         //let terms = jieqi(this.year)
         //let ones = shuoWang(this.year).filter(one=>one.name=="初一")
         //this.terms = terms.concat(ones).sort((x,y)=>x.date-y.date)
         //this.message=`計算中`
         //console.log(this.message)
+        this.message = await this.myWorker.postMessage('message1',['createLunarCalendar start'])
         let calendarData= createLunarCalendar(this.year)
+        this.message = await this.myWorker.postMessage('message1',['createLunarCalendar end'])
         this.terms =  calendarData.terms //jieqi(this.year) 
         this.shuoWangs = calendarData.shuoWangs //shuoWang(this.year)
         this.mixedTerms = calendarData.mixedTerms
@@ -125,11 +135,13 @@
           //console.log(begin,end)
           let result=[]
           if (this.shuoWangs[i].name=="初一"){
-            this.message=`計算 ${this.shuoWangs[i].date} 是否發生日蝕`
+            let message =`計算 ${this.shuoWangs[i].date.getMonth()}/${this.shuoWangs[i].date.getDate()} 是否發生日蝕`
+            this.message = await this.myWorker.postMessage('message1',[message])
             //console.log(this.message)
             result = Eclipse(begin,end,eclipseMap.solar)
           } else {
-            this.message=`計算 ${this.shuoWangs[i].date} 是否發生月蝕`
+            let message=`計算 ${this.shuoWangs[i].date.getMonth()}/${this.shuoWangs[i].date.getDate()} 是否發生月蝕`
+            this.message = await this.myWorker.postMessage('message1',[message])
             //console.log(this.message)
             result = Eclipse(begin,end,eclipseMap.moon)
           }
