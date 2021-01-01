@@ -124,11 +124,11 @@
           let result=[]
           if (this.shuoWangs[i].name=="初一"){
             this.message=`計算 ${this.shuoWangs[i].date} 是否發生日蝕`
-            console.log(this.message)
+            //console.log(this.message)
             result = await Eclipse(begin,end,eclipseMap.solar)
           } else {
             this.message=`計算 ${this.shuoWangs[i].date} 是否發生月蝕`
-            console.log(this.message)
+            //console.log(this.message)
             result = await Eclipse(begin,end,eclipseMap.moon)
           }
           if (result.length==1 && result[0].status=="正常")
@@ -140,7 +140,7 @@
         this.eclipses = eclipses
         this.message = "按計算鍵開始計算日曆，桌上型瀏覽器約需10秒，手機約需30秒"
         this.monthTables = this.constructMonthTable()
-        console.log(this.monthTables)
+        //console.log(this.monthTables)
         this.busy = null
       },
       getTwoRows: function (term){
@@ -165,7 +165,7 @@
           for (let i=0;i<rows;i++){
             monthRows.push(dataArray.slice(i*7,i*7+7))
           }
-          console.log(monthRows.length)
+          //console.log(monthRows.length)
           monthTables.push(monthRows)
         }
         return monthTables;
