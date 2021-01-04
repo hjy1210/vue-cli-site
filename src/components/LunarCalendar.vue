@@ -137,13 +137,13 @@
           //console.log(begin,end)
           let result=[]
           if (this.shuoWangs[i].name=="初一"){
-            let message =`計算 ${this.shuoWangs[i].date.getMonth()}/${this.shuoWangs[i].date.getDate()} 是否發生日蝕`
+            let message =`計算 ${this.shuoWangs[i].date.getMonth() + 1}/${this.shuoWangs[i].date.getDate()} 是否發生日蝕`
             //this.message = await this.myWorker.postMessage('message1',[message])
             //console.log(this.message)
             result = Eclipse(begin,end,eclipseMap.solar)
             this.message = await this.myWorker.postMessage('message1',[message])
           } else {
-            let message=`計算 ${this.shuoWangs[i].date.getMonth()}/${this.shuoWangs[i].date.getDate()} 是否發生月蝕`
+            let message=`計算 ${this.shuoWangs[i].date.getMonth() + 1}/${this.shuoWangs[i].date.getDate()} 是否發生月蝕`
             //this.message = await this.myWorker.postMessage('message1',[message])
             //console.log(this.message)
             result = Eclipse(begin,end,eclipseMap.moon)

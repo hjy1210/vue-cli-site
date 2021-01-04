@@ -35,6 +35,10 @@ function lonofsolar(jde) {
 	let radian = solar.apparentVSOP87(earth, jde).lon;
 	return (radian * 180 / Math.PI + 360) % 360; // 非常奇怪，加 360 後春分就對了
 }
+function latofsolar(jde) {
+	let radian = solar.apparentVSOP87(earth, jde).lat;
+	return radian * 180 / Math.PI;
+}
 
 /**
  * 月亮的黃經
@@ -45,6 +49,10 @@ function lonofsolar(jde) {
 function lonofmoon(jde) {
 	let radian = moonposition.position(jde).lon;
 	return (radian * 180 / Math.PI + 360) % 360;
+}
+function latofmoon(jde) {
+	let radian = moonposition.position(jde).lat;
+	return radian * 180 / Math.PI;
 }
 function jieIndex(date) {
 	return Math.floor(lonofsolar(julian.DateToJDE(date)) / 15);
@@ -83,7 +91,7 @@ function inShuoWang(date1, date2) {
 }
 function getTomorrow(date) {
 	let d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-	d.setFullYear(date.getFullYear())
+	d.setFullYear(date.getFullYear());
 	d.setDate(d.getDate() + 1);
 	return d;
 }
@@ -132,9 +140,9 @@ function middleDate(date1, date2) {
 function jieqi(year) {
 	let res = [];
 	let lastday = new Date(year + 1, 0, 1);
-	let today = new Date(year, 0, 1)
-	lastday.setFullYear(year + 1)
-	today.setFullYear(year)
+	let today = new Date(year, 0, 1);
+	lastday.setFullYear(year + 1);
+	today.setFullYear(year);
 	for (; today < lastday; today = getTomorrow(today)) {
 		let tomorrow = getTomorrow(today);
 		let value = inJie(today, tomorrow);
@@ -162,9 +170,9 @@ function jieqi(year) {
 function shuoWang(year) {
 	let res = [];
 	let lastday = new Date(year + 1, 0, 1);
-	let today = new Date(year, 0, 1)
-	lastday.setFullYear(year + 1)
-	today.setFullYear(year)
+	let today = new Date(year, 0, 1);
+	lastday.setFullYear(year + 1);
+	today.setFullYear(year);
 
 	for (; today < lastday; today = getTomorrow(today)) {
 		let tomorrow = getTomorrow(today);
@@ -184,7 +192,7 @@ function shuoWang(year) {
 	}
 	return res;
 }
-module.exports = { jieqi, shuoWang, ZhongqiNames, getTomorrow};
+module.exports = { jieqi, shuoWang, ZhongqiNames, getTomorrow, lonofsolar };
 /*
 let jdes = [1721789.5684809217, 1721790.0684809217, 1721790.5684809217]
 jdes = [1721789.5684809217, 1721790.0684809217, 1721790.5684809217]
@@ -193,3 +201,35 @@ console.log(dates,""+dates)
 dates = jdes.map(x=>julian.JDEToDate(x+0.3))
 console.log(dates,""+dates)
 */
+if (__dirname == 'E:\\vue-cli-site\\src\\componen') {
+	let lons = [];
+	for (let i = 0; i < 12; i++) {
+		let day = new Date(Date.UTC(2020, i, 1));
+		let jde = julian.DateToJDE(day);
+		lons.push(lonofsolar(jde));
+	}
+	console.log(lons);
+
+	let lats = [];
+	for (let i = 0; i < 12; i++) {
+		let day = new Date(Date.UTC(2020, i, 1));
+		let jde = julian.DateToJDE(day);
+		lats.push(latofsolar(jde));
+	}
+	console.log(lats);
+	lons = [];
+	for (let i = 0; i < 12; i++) {
+		let day = new Date(Date.UTC(2020, i, 1));
+		let jde = julian.DateToJDE(day);
+		lons.push(lonofmoon(jde));
+	}
+	console.log(lons);
+
+	lats = [];
+	for (let i = 0; i < 12; i++) {
+		let day = new Date(Date.UTC(2020, i, 1));
+		let jde = julian.DateToJDE(day);
+		lats.push(latofmoon(jde));
+	}
+	console.log(lats);
+}
