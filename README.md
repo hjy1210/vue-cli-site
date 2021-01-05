@@ -121,10 +121,18 @@ Table Settings [change] :  QUANTITIES=1,2,31
 Display/Output [change] :  default (formatted HTML)
 ```
 
-用下面的片段城市，計算2020年的中氣，與中央氣象局的資料完全相符
+用下面的片段程式，計算2020年的中氣，與中央氣象局的資料完全相符
 
 ```{node}
 for (let i=0; i<12; i++){
     console.log(julian.JDEToDate(solstice.longitude(2020, earth, i* Math.PI/6)))
 }
 ```
+
+## astronomy-bundle 套件
+
+用astronomia，不知如何計算行星的地心赤道、地心黃道座標。
+
+但用 astronomy-bundle，可輕鬆求得sun, moon與行星的地心赤道、地心黃道座標，
+用 astronomy-bundle.test.js 跟Horizon網站的資料相比大致相符。
+
