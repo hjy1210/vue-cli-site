@@ -2,6 +2,10 @@
   "name": "vue-cli-site",
   "version": "0.1.0",
   "private": true,
+  "jest": {
+    "verbose": true,
+    "bail": 0
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

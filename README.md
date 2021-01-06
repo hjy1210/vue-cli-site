@@ -131,8 +131,7 @@ for (let i=0; i<12; i++){
 
 ## astronomy-bundle 套件
 
-用astronomia，不知如何計算行星的地心赤道、地心黃道座標。
+用astronomia，不知如何計算行星的地心赤道、地心黃道座標。**計算333/1/27 12:00 的 JD 為 1842712，與 Meeus(2009) Page 61, Example 7.b 不符**。
 
 但用 astronomy-bundle，可輕鬆求得sun, moon與行星的地心赤道、地心黃道座標，
 用 astronomy-bundle.test.js 跟Horizon網站的資料相比大致相符。
-
