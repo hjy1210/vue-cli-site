@@ -33,57 +33,66 @@ const objConstructor = {
 	uranus: createUranus,
 	neptune: createNeptune
 };
-function radecdelta(ra, dec, delta) {
+function radecdelta(astrora, astrodec, ra, dec, delta) {
 	return {
+		astrora: astrora,
+		astrodec: astrodec,
 		rightAscension: ra,
 		declination: dec,
 		radiusVector: delta
 	};
 }
 let objposition = {
-	sun: radecdelta(280.88884, -23.05882, 0.98329304255144),
-	moon: radecdelta(349.16852, -9.97481, 0.00269988972202),
-	venus: radecdelta(317.43675, -18.26531, 1.2780281414632),
-	mars: radecdelta(236.22639, -19.44505, 2.18441290339058),
-	jupiter: radecdelta(277.2591, -23.17971, 6.20889838848593),
-	saturn: radecdelta(293.11485, -21.68417, 10.9964084755714),
-	mercury: radecdelta(274.82205, -24.63572, 1.4339923547029),
-	uranus: radecdelta(30.66643, 11.94191, 19.4187753586373),
-	neptune: radecdelta(347.76053, -6.36481, 30.3152893725537)
+	sun: radecdelta(280.59732, -23.07927, 280.88884, -23.05882, 0.98329304255144),
+	moon: radecdelta(348.91492, -10.08107, 349.16852, -9.97481, 0.00269988972202),
+	venus: radecdelta(317.16507, -18.34461, 317.43675, -18.26531, 1.2780281414632),
+	mars: radecdelta(235.94673, -19.38528, 236.22639, -19.44505, 2.18441290339058),
+	jupiter: radecdelta(276.96689, -23.19346, 277.2591, -23.17971, 6.20889838848593),
+	saturn: radecdelta(292.82881, -21.72647, 293.11485, -21.68417, 10.9964084755714),
+	mercury: radecdelta(274.52634, -24.64494, 274.82205, -24.63572, 1.4339923547029),
+	uranus: radecdelta(30.40046,  11.84712, 30.66643, 11.94191, 19.4187753586373),
+	neptune: radecdelta(347.50806, -6.47088, 347.76053, -6.36481, 30.3152893725537)
 };
 // const toi = createTimeOfInterest.fromTime(2020, 1, 1, 0, 0, 0)
 // data on Horison web site
 // obj     ra        dec       delta            lon             lat
-// sun     280.88884 -23.05882 0.98329304255144 280.0094920  -0.0001188
-// moon    349.16852  -9.97481 0.00269988972202 346.1383763  -4.8940719
-// venus   317.43675 -18.26531 1.27802814146320
-// mars    236.22639 -19.44505 2.18441290339058
-// jupiter 277.25910 -23.17971 6.20889838848593
-// saturn  293.11485 -21.68417 10.9964084755714
-// mercury 274.82205 -24.63572 1.43399235470290
-// uranus  30.66643  11.94191  19.4187753586373
-// neptune 347.76053  -6.36481 30.3152893725537
+// sun     280.59732 -23.07927 280.88884 -23.05882 0.98329304255144 280.0094920  -0.0001188
+// moon    348.91492 -10.08107 349.16852  -9.97481 0.00269988972202 346.1383763  -4.8940719
+// venus   317.16507 -18.34461 317.43675 -18.26531 1.27802814146320
+// mars    235.94673 -19.38528 236.22639 -19.44505 2.18441290339058
+// jupiter 276.96689 -23.19346 277.25910 -23.17971 6.20889838848593
+// saturn  292.82881 -21.72647 293.11485 -21.68417 10.9964084755714
+// mercury 274.52634 -24.64494 274.82205 -24.63572 1.43399235470290
+// uranus  30.40046  11.84712  30.66643  11.94191  19.4187753586373
+// neptune 347.50806  -6.47088 347.76053  -6.36481 30.3152893725537
 describe('test astronomy-bundle', () => {
-	test('ra,dec,delta of sun, moon, planets at 2020-1-1 with Horizon', async () => {
+	test('icrf/a-appraent geocentric ra/dec/delta of sun, moon, planets at 2020-1-1 with Horizon', async () => {
 		for (let i = 0; i < objnames.length; i++) {
 			let name = objnames[i];
 			let astroObj = objConstructor[name](toi);
 			let data = await astroObj.getApparentGeocentricEquatorialSphericalCoordinates();
-			//expect(data.rightAscension).toBeCloseTo(objposition[name].rightAscension,1)
-			//expect(data.declination).toBeCloseTo(objposition[name].declination,1)
-			//expect(data.radiusVector).toBeCloseTo(objposition[name].radiusVector,1)
+			// apparent 地心赤道座標的計算
 			expect(Math.abs(data.rightAscension - objposition[name].rightAscension)).toBeLessThan(0.009);
 			expect(Math.abs(data.declination - objposition[name].declination)).toBeLessThan(0.009);
 			expect(Math.abs(data.radiusVector - objposition[name].radiusVector)).toBeLessThan(0.00009);
+			// ICRF 地心赤道座標的計算
+			if ( name != "moon") {
+				data = await astroObj.getGeocentricEquatorialSphericalJ2000Coordinates()
+				//expect(data.rightAscension).toBeCloseTo(objposition[name].astrora,2)
+				expect(Math.abs(data.rightAscension - objposition[name].astrora)).toBeLessThan(0.01)
+				expect(Math.abs(data.declination - objposition[name].astrodec)).toBeLessThan(0.01)
+			}
 		}
 	});
 	test('lon,lat of sun, moon at 2020-1-1 with Horizon', async () => {
 		let sun = createSun(toi);
 		let data = await sun.getApparentGeocentricEclipticSphericalCoordinates();
+		// 測試太陽的apparent黃道座標
 		expect(Math.abs(data.lon - 280.009492)).toBeLessThan(0.009);
 		expect(Math.abs(data.lat - -0.0001188)).toBeLessThan(0.009);
 		let moon = createMoon(toi);
 		let moondata = await moon.getApparentGeocentricEclipticSphericalCoordinates();
+		// 測試月亮的apparent黃道座標
 		expect(Math.abs(moondata.lon - 346.1383763)).toBeLessThan(0.009);
 		expect(Math.abs(moondata.lat - -4.8940719)).toBeLessThan(0.009);
 	});
@@ -120,7 +129,7 @@ describe('icrf ra dec, appraent ra dec, delta, eclon eclat', () => {
 		expect(app.radiusVector).toBeCloseTo(9.75506000404463, 7);
 		const icrfEclip = equatorialSpherical2eclipticSpherical(236.32336, -17.84566, 9.75506000404463, T);
 		const appEclip = eclipticJ20002eclipticDate(icrfEclip.lon, icrfEclip.lat, icrfEclip.radiusVector, T);
-		// 測試土星的 J2000赤道轉J200黃道，再轉apparent黃道
+		// 測試土星的 J2000赤道轉J2000黃道，再轉apparent黃道
 		expect(appEclip.lon).toBeCloseTo(238.340481, 2);
 		expect(appEclip.lat).toBeCloseTo(1.9427444, 2);
 		expect(appEclip.radiusVector).toBeCloseTo(9.75506000404463, 7);
@@ -170,7 +179,7 @@ describe('icrf ra dec, appraent ra dec, delta, eclon eclat', () => {
 		const saturn = createSaturn(toi);
 		const location = createLocation(25, 121, 0);
 		const local = await saturn.getApparentTopocentricHorizontalCoordinates(location);
-		console.log(local);
+		// console.log(local);
 		// 測試土星的apparent地表地平座標
 		expect(local.azimuth).toBeCloseTo(257.6578, 3);
 		expect(local.altitude).toBeCloseTo(-16.737, 2);
@@ -192,3 +201,20 @@ describe('icrf ra dec, appraent ra dec, delta, eclon eclat', () => {
 		expect(topApp.radiusVector).toBeCloseTo(9.75507225288152, 4);
 	});
 });
+//  Date__(UT)__HR:MN:SC.fff     R.A.___(ICRF)___DEC R.A._(a-appar)_DEC.            delta      deldot       TDB-UT    ObsEcLon    ObsEcLat
+//  2021-Jan-01 00:00:00.000     24.79948  11.23957  25.07558  11.34477 0.89856820833498  15.6579710    69.183909  27.3576862   0.8714905
+describe('relation between Atrometric RA/DEC, airless-apparent RA/DEC and ObsEcLon/ObsEcLat', ()=>{
+	test('mars at 2021-Jan-01 00:00:00.000', () =>{
+		const toi = createTimeOfInterest.fromTime(2021, 1, 1, 0, 0, 0);
+		const T = toi.getJulianCenturiesJ2000()
+		const a_app = eclipticSpherical2equatorialSpherical(27.3576862, 0.8714905, 0.89856820833498, T, true)
+		// test ObsEcLon/ObsEcLat => airless-apparent RA/DEC
+		expect(a_app.rightAscension).toBeCloseTo(25.07558,5)
+		expect(a_app.declination).toBeCloseTo(11.34477,5)
+		const eclip_j2000 = equatorialSpherical2eclipticSpherical(24.79948, 11.23957, 0.89856820833498, T)
+		const eclip_date = eclipticJ20002eclipticDate(eclip_j2000.lon, eclip_j2000.lat, eclip_j2000.radiusVector, T)
+		// test Atrometric RA/DEC => ObsEcLon/ObsEcLat
+		expect(eclip_date.lon).toBeCloseTo(27.3576862, 2)
+		expect(eclip_date.lat).toBeCloseTo(0.8714905, 2)
+	})
+})
